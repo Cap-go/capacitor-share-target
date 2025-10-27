@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@capgo/capacitor-share-target Example</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>@capgo/capacitor-share-target Example</h1>
+      <p class="lead">Share content from other apps to see it appear here.</p>
+
+      <div class="info-box">
+        <h2>How to Test</h2>
+        <ol>
+          <li>Build and run this app on a device</li>
+          <li>Open another app (browser, gallery, etc.)</li>
+          <li>Share some content (text, image, file)</li>
+          <li>Select this app from the share sheet</li>
+        </ol>
+      </div>
+
+      <div class="status-section">
+        <h2>Plugin Status</h2>
+        <div id="plugin-status">Waiting for plugin to load...</div>
+      </div>
+
+      <div class="shared-content-section">
+        <h2>Shared Content</h2>
+        <div id="shared-content" class="empty">
+          No content has been shared yet. Share something from another app to see it appear here.
+        </div>
+      </div>
+
+      <div class="history-section">
+        <h2>Share History</h2>
+        <div id="share-history" class="empty">
+          No share history yet.
+        </div>
+      </div>
+
+      <button id="clear-history">Clear History</button>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

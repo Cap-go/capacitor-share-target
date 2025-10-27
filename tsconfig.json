@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "lib": ["ES2022", "DOM"],
+    "target": "ES2017",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist/esm",
+    "removeComments": false
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

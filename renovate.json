@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "config:base",
+    "schedule:earlyMondays"
+  ],
+  "dependencyDashboard": false,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": "before 3am on Monday"
+  },
+  "packageRules": [
+    {
+      "matchPackageNames": ["capacitor-swift-pm"],
+      "groupName": "capacitor-swift-pm"
+    }
+  ]
+}

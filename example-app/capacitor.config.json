@@ -1,0 +1,10 @@
+{
+  "appId": "app.capgo.sharetarget",
+  "appName": "Share Target Example",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}
