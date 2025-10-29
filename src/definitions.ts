@@ -120,7 +120,7 @@ export interface CapacitorShareTargetPlugin {
    *
    * @example
    * ```typescript
-   * const { version } = await CapacitorShareTarget.getPluginVersion();
+   * const { version} = await CapacitorShareTarget.getPluginVersion();
    * console.log('Plugin version:', version);
    * ```
    */
