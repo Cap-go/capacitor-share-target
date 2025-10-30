@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class CapacitorShareTargetPlugin extends Plugin {
 
     private static final String TAG = "CapacitorShareTarget";
-    private static final String PLUGIN_VERSION = "7.0.0";
+    private static final String pluginVersion = "7.0.0";
 
     @Override
     public void load() {
@@ -195,7 +195,7 @@ public class CapacitorShareTargetPlugin extends Plugin {
     public void getPluginVersion(PluginCall call) {
         try {
             JSObject ret = new JSObject();
-            ret.put("version", PLUGIN_VERSION);
+            ret.put("version", pluginVersion);
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Could not get plugin version", e);
