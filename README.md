@@ -69,7 +69,7 @@ CapacitorShareTarget.addListener('shareReceived', (event) => {
 
 <docgen-index>
 
-* [`addListener('shareReceived', ...)`](#addlistenersharereceived)
+* [`addListener('shareReceived', ...)`](#addlistenersharereceived-)
 * [`removeAllListeners()`](#removealllisteners)
 * [`getPluginVersion()`](#getpluginversion)
 * [Interfaces](#interfaces)
@@ -78,6 +78,11 @@ CapacitorShareTarget.addListener('shareReceived', (event) => {
 
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
+
+Capacitor Share Target Plugin interface.
+
+This plugin allows your application to receive content shared from other apps.
+Users can share text, URLs, and files to your app from other applications.
 
 ### addListener('shareReceived', ...)
 
@@ -146,22 +151,22 @@ Returns the current version of the native plugin implementation.
 
 Event data received when content is shared to the application.
 
-| Prop        | Type                        | Description                                        | Since |
-| ----------- | --------------------------- | -------------------------------------------------- | ----- |
-| **`title`** | <code>string</code>         | The title of the shared content.                   | 0.1.0 |
-| **`texts`** | <code>string[]</code>       | Array of text content shared to the application.   | 0.1.0 |
-| **`files`** | <code>SharedFile[]</code>   | Array of files shared to the application.          | 0.2.0 |
+| Prop        | Type                      | Description                                      | Since |
+| ----------- | ------------------------- | ------------------------------------------------ | ----- |
+| **`title`** | <code>string</code>       | The title of the shared content.                 | 0.1.0 |
+| **`texts`** | <code>string[]</code>     | Array of text content shared to the application. | 0.1.0 |
+| **`files`** | <code>SharedFile[]</code> | Array of files shared to the application.        | 0.2.0 |
 
 
 #### SharedFile
 
 Represents a file shared to the application.
 
-| Prop           | Type                | Description                                                                                      | Since |
-| -------------- | ------------------- | ------------------------------------------------------------------------------------------------ | ----- |
+| Prop           | Type                | Description                                                                                                                             | Since |
+| -------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----- |
 | **`uri`**      | <code>string</code> | The URI of the shared file. On Android/iOS this will be a file path or data URL. On web this will be a cached URL accessible via fetch. | 0.1.0 |
-| **`name`**     | <code>string</code> | The name of the shared file, with or without extension.                                          | 0.1.0 |
-| **`mimeType`** | <code>string</code> | The MIME type of the shared file.                                                                | 0.1.0 |
+| **`name`**     | <code>string</code> | The name of the shared file, with or without extension.                                                                                 | 0.1.0 |
+| **`mimeType`** | <code>string</code> | The MIME type of the shared file.                                                                                                       | 0.1.0 |
 
 </docgen-api>
 
