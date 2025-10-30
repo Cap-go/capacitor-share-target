@@ -169,9 +169,10 @@ public class CapacitorShareTargetPlugin extends Plugin {
 
             File outputFile = new File(cacheDir, fileName);
 
-            try (InputStream inputStream = getActivity().getContentResolver().openInputStream(uri);
-                 FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-
+            try (
+                InputStream inputStream = getActivity().getContentResolver().openInputStream(uri);
+                FileOutputStream outputStream = new FileOutputStream(outputFile)
+            ) {
                 if (inputStream == null) {
                     return null;
                 }

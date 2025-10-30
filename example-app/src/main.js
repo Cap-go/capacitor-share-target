@@ -1,6 +1,6 @@
 import './style.css';
-import { CapacitorShareTarget } from '@capgo/capacitor-share-target';
 import { Capacitor } from '@capacitor/core';
+import { CapacitorShareTarget } from '@capgo/capacitor-share-target';
 
 const statusDiv = document.getElementById('plugin-status');
 const sharedContentDiv = document.getElementById('shared-content');

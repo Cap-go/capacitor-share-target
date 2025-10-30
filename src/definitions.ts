@@ -93,7 +93,7 @@ export interface CapacitorShareTargetPlugin {
    */
   addListener(
     eventName: 'shareReceived',
-    listenerFunc: (event: ShareReceivedEvent) => void
+    listenerFunc: (event: ShareReceivedEvent) => void,
   ): Promise<PluginListenerHandle>;
 
   /**
