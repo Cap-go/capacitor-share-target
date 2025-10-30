@@ -57,7 +57,6 @@
     "@ionic/eslint-config": "^0.4.0",
     "@ionic/prettier-config": "^4.0.0",
     "@ionic/swiftlint-config": "^2.0.0",
-    "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/node": "^22.13.1",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.31.0",

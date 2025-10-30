@@ -1,5 +1,3 @@
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-
 export default {
   input: 'dist/esm/index.js',
   output: [
@@ -7,6 +5,9 @@ export default {
       file: 'dist/plugin.js',
       format: 'iife',
       name: 'capacitorCapacitorShareTarget',
+      globals: {
+        '@capacitor/core': 'capacitorExports',
+      },
       sourcemap: true,
       inlineDynamicImports: true,
     },
@@ -18,5 +19,4 @@ export default {
     },
   ],
   external: ['@capacitor/core'],
-  plugins: [nodeResolve()],
 };
