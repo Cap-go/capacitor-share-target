@@ -1,6 +1,6 @@
 {
   "name": "@capgo/capacitor-share-target",
-  "version": "7.0.6",
+  "version": "7.0.7",
   "description": "Receive shared content from other apps",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
