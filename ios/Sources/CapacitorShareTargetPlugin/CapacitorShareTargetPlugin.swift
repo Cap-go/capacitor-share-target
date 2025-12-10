@@ -7,7 +7,7 @@ import Capacitor
  */
 @objc(CapacitorShareTargetPlugin)
 public class CapacitorShareTargetPlugin: CAPPlugin, CAPBridgedPlugin {
-    private let pluginVersion: String = "7.0.8"
+    private let pluginVersion: String = "8.0.1"
     public let identifier = "CapacitorShareTargetPlugin"
     public let jsName = "CapacitorShareTarget"
     public let pluginMethods: [CAPPluginMethod] = [
