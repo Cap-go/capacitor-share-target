@@ -24,6 +24,7 @@
   "bugs": {
     "url": "https://github.com/Cap-go/capacitor-share-target/issues"
   },
+  "homepage": "https://capgo.app/docs/plugins/share-target/",
   "keywords": [
     "capacitor",
     "plugin",
