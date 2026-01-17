@@ -42,8 +42,67 @@ For iOS, you need to create a Share Extension to receive shared content. This re
 1. In Xcode, go to File > New > Target
 2. Select "Share Extension" and click Next
 3. Name it (e.g., "ShareExtension") and click Finish
-4. Configure the Share Extension to save data to a shared App Group
-5. Update the `YOUR_APP_GROUP_ID` in the iOS plugin code
+4. Configure the Share Extension to save data to a shared App Group (e.g., `group.com.yourcompany.app`)
+5. Configure the plugin in your `capacitor.config.ts` or `capacitor.config.json`:
+
+```typescript
+{
+  plugins: {
+    CapacitorShareTarget: {
+      appGroupId: "group.com.yourcompany.app"
+    }
+  }
+}
+```
+
+6. In your ShareViewController.swift, save the shared data using the key `"share-target-data"` or `"SharedData"` to UserDefaults with your app group ID
+
+Example ShareViewController.swift:
+
+```swift
+import UIKit
+import UniformTypeIdentifiers
+
+class ShareViewController: UIViewController {
+    let APP_GROUP_ID = "group.com.yourcompany.app"  // Same as in capacitor.config
+    let APP_URL_SCHEME = "yourapp"  // Your app's URL scheme
+    
+    private var texts: [[String: Any]] = []
+    private var files: [[String: Any]] = []
+
+    override public func viewDidLoad() {
+        super.viewDidLoad()
+        
+        guard let extensionItem = extensionContext?.inputItems.first as? NSExtensionItem,
+              let attachments = extensionItem.attachments else {
+            self.exit()
+            return
+        }
+
+        Task {
+            // Process attachments...
+            // (See full implementation in issue examples)
+            
+            // Save to UserDefaults
+            let shareData: [String: Any] = [
+                "title": extensionItem.attributedTitle?.string ?? "",
+                "texts": texts,
+                "files": files
+            ]
+            
+            let userDefaults = UserDefaults(suiteName: APP_GROUP_ID)
+            userDefaults?.set(shareData, forKey: "share-target-data")
+            userDefaults?.synchronize()
+            
+            // Open main app with your URL scheme
+            let url = URL(string: "\(APP_URL_SCHEME)://share")!
+            self.openURL(url)
+        }
+    }
+    
+    // ... rest of implementation
+}
+```
 
 For detailed instructions, see the [iOS Share Extension documentation](https://developer.apple.com/documentation/uikit/uiactivityviewcontroller).
 
