@@ -40,8 +40,8 @@ public class CapacitorShareTargetPlugin: CAPPlugin, CAPBridgedPlugin {
         }
 
         // Handle share extension URL scheme
-        // Support both "capacitor://share" and custom schemes with "/share" path
-        if (url.scheme == "capacitor" && url.host == "share") || url.path.contains("share") {
+        // Support both "capacitor://share" and custom schemes with "/share" or "://share" paths
+        if (url.scheme == "capacitor" && url.host == "share") || url.host == "share" || url.path == "/share" {
             checkForSharedContent()
         }
     }
@@ -49,6 +49,11 @@ public class CapacitorShareTargetPlugin: CAPPlugin, CAPBridgedPlugin {
     private func checkForSharedContent() {
         // Get app group ID from configuration or use placeholder
         let appGroupId = getConfigValue("appGroupId") as? String ?? "group.YOUR_APP_GROUP_ID"
+        
+        // Warn if placeholder is still being used
+        if appGroupId == "group.YOUR_APP_GROUP_ID" {
+            CAPLog.print("⚠️ ShareTarget: Using placeholder app group ID. Please configure 'appGroupId' in capacitor.config to receive share events.")
+        }
         
         // Get shared content from UserDefaults (set by share extension)
         guard let userDefaults = UserDefaults(suiteName: appGroupId) else {
