@@ -20,6 +20,9 @@ import java.util.ArrayList;
 @CapacitorPlugin(name = "CapacitorShareTarget")
 public class CapacitorShareTargetPlugin extends Plugin {
 
+    private JSObject pendingShareData;
+    private boolean hasPendingShare = false;
+
     private static final String TAG = "CapacitorShareTarget";
     private static final String pluginVersion = "7.0.0";
 
@@ -87,6 +90,8 @@ public class CapacitorShareTargetPlugin extends Plugin {
 
                 // Notify listeners
                 notifyListeners("shareReceived", shareData);
+                pendingShareData = shareData;
+                hasPendingShare = true;
                 Log.d(TAG, "Share received: " + shareData.toString());
             } catch (Exception e) {
                 Log.e(TAG, "Error handling shared content", e);
@@ -200,5 +205,15 @@ public class CapacitorShareTargetPlugin extends Plugin {
         } catch (Exception e) {
             call.reject("Could not get plugin version", e);
         }
+    }
+
+    @PluginMethod
+    public void dispatchPendingShare(PluginCall call) {
+        if (hasPendingShare && pendingShareData != null) {
+            notifyListeners("shareReceived", pendingShareData);
+            hasPendingShare = false;
+            pendingShareData = null;
+        }
+        call.resolve();
     }
 }

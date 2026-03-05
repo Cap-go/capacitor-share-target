@@ -7,11 +7,15 @@ import Capacitor
  */
 @objc(CapacitorShareTargetPlugin)
 public class CapacitorShareTargetPlugin: CAPPlugin, CAPBridgedPlugin {
+    private var pendingShareEvent: [String: Any]?
+
+
     private let pluginVersion: String = "8.0.20"
     public let identifier = "CapacitorShareTargetPlugin"
     public let jsName = "CapacitorShareTarget"
     public let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "getPluginVersion", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "getPluginVersion", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "dispatchPendingShare", returnType: CAPPluginReturnPromise)
     ]
 
     override public func load() {
@@ -107,9 +111,21 @@ public class CapacitorShareTargetPlugin: CAPPlugin, CAPBridgedPlugin {
         
         // Notify listeners
         notifyListeners("shareReceived", data: shareEvent)
+        pendingShareEvent = shareEvent
     }
 
     @objc func getPluginVersion(_ call: CAPPluginCall) {
         call.resolve(["version": self.pluginVersion])
+    }
+    @objc
+    func dispatchPendingShare(_ call: CAPPluginCall) {
+        guard let pending = pendingShareEvent else {
+            call.resolve()
+            return
+        }
+
+        notifyListeners("shareReceived", data: pending)
+        pendingShareEvent = nil
+        call.resolve()
     }
 }

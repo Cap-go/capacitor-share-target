@@ -96,6 +96,8 @@ export interface CapacitorShareTargetPlugin {
     listenerFunc: (event: ShareReceivedEvent) => void,
   ): Promise<PluginListenerHandle>;
 
+  dispatchPendingShare(): Promise<void>;
+
   /**
    * Remove all listeners for this plugin.
    *
