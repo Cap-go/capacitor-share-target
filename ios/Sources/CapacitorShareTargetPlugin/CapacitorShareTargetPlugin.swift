@@ -1,5 +1,6 @@
 import Foundation
 import Capacitor
+import UIKit
 
 /**
  * Please read the Capacitor iOS Plugin Development Guide
@@ -22,6 +23,14 @@ public class CapacitorShareTargetPlugin: CAPPlugin, CAPBridgedPlugin {
             self,
             selector: #selector(handleOpenURL(_:)),
             name: .capacitorOpenURL,
+            object: nil
+        )
+
+        // Also check when the app returns to foreground (share extensions often cannot open the host app)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
             object: nil
         )
 
@@ -107,6 +116,10 @@ public class CapacitorShareTargetPlugin: CAPPlugin, CAPBridgedPlugin {
         
         // Notify listeners and retain until JavaScript registers to handle cold starts
         notifyListeners("shareReceived", data: shareEvent, retainUntilConsumed: true)
+    }
+
+    @objc private func handleAppDidBecomeActive(_ notification: Notification) {
+        checkForSharedContent()
     }
 
     @objc func getPluginVersion(_ call: CAPPluginCall) {
