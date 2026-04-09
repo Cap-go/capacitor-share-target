@@ -105,8 +105,8 @@ public class CapacitorShareTargetPlugin: CAPPlugin, CAPBridgedPlugin {
         userDefaults.removeObject(forKey: key)
         userDefaults.synchronize()
         
-        // Notify listeners
-        notifyListeners("shareReceived", data: shareEvent)
+        // Notify listeners and retain until JavaScript registers to handle cold starts
+        notifyListeners("shareReceived", data: shareEvent, retainUntilConsumed: true)
     }
 
     @objc func getPluginVersion(_ call: CAPPluginCall) {
