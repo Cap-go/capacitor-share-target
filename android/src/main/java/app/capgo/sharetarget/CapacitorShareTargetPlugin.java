@@ -85,8 +85,8 @@ public class CapacitorShareTargetPlugin extends Plugin {
                 }
                 shareData.put("files", files);
 
-                // Notify listeners
-                notifyListeners("shareReceived", shareData);
+                // Notify listeners and retain until JavaScript registers to handle cold starts
+                notifyListeners("shareReceived", shareData, true);
                 Log.d(TAG, "Share received: " + shareData.toString());
             } catch (Exception e) {
                 Log.e(TAG, "Error handling shared content", e);
