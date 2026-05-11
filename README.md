@@ -1,5 +1,7 @@
 # @capgo/capacitor-share-target
 
+<a href="https://capgo.app/"><img src="https://capgo.app/readme-banner.svg?repo=Cap-go/capacitor-share-target" alt="Capgo - Instant updates for Capacitor" /></a>
+
 Capacitor plugin to receive shared content from other apps.
 
 ## Compatibility
