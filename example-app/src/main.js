@@ -14,7 +14,8 @@ let shareHistory = [];
 async function initializePlugin() {
   try {
     if (!Capacitor.isNativePlatform()) {
-      statusDiv.textContent = 'Web platform detected. This plugin requires a native platform (Android/iOS) to work.';
+      statusDiv.textContent =
+        'Web platform detected. This plugin requires a native platform (Android/iOS) to work.';
       statusDiv.className = 'error';
       return;
     }
@@ -40,7 +41,7 @@ function handleShareReceived(event) {
   // Add to history
   shareHistory.unshift({
     timestamp: new Date(),
-    data: event
+    data: event,
   });
 
   // Update UI
@@ -71,7 +72,7 @@ function displaySharedContent(event) {
     label.textContent = 'Shared Text:';
     textsDiv.appendChild(label);
 
-    event.texts.forEach(text => {
+    event.texts.forEach((text) => {
       const textItem = document.createElement('div');
       textItem.className = 'text-item';
       textItem.textContent = text;
@@ -91,7 +92,7 @@ function displaySharedContent(event) {
     label.textContent = `Shared Files (${event.files.length}):`;
     filesDiv.appendChild(label);
 
-    event.files.forEach(file => {
+    event.files.forEach((file) => {
       const fileItem = document.createElement('div');
       fileItem.className = 'file-item';
 
@@ -150,7 +151,8 @@ function updateHistoryDisplay() {
 function clearHistory() {
   shareHistory = [];
   sharedContentDiv.classList.add('empty');
-  sharedContentDiv.innerHTML = 'No content has been shared yet. Share something from another app to see it appear here.';
+  sharedContentDiv.innerHTML =
+    'No content has been shared yet. Share something from another app to see it appear here.';
   updateHistoryDisplay();
 }
 
