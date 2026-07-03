@@ -4,7 +4,7 @@ import pkg from './package.json';
 
 const config: CapacitorConfig = {
   appId: 'app.capgo.sharetarget',
-  appName: 'Share Target Example',
+  appName: '@capgo/capacitor-share-target',
   webDir: 'dist',
   plugins: {
     SplashScreen: {
