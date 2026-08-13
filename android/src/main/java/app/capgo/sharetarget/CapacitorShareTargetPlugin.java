@@ -24,12 +24,6 @@ public class CapacitorShareTargetPlugin extends Plugin {
     private static final String pluginVersion = "7.0.0";
 
     @Override
-    public void load() {
-        super.load();
-        handleIntent(getActivity().getIntent());
-    }
-
-    @Override
     protected void handleOnNewIntent(Intent intent) {
         super.handleOnNewIntent(intent);
         handleIntent(intent);
