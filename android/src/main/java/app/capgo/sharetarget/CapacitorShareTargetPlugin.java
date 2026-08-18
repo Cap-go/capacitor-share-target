@@ -3,6 +3,7 @@ package app.capgo.sharetarget;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -59,7 +60,12 @@ public class CapacitorShareTargetPlugin extends Plugin {
                 // Get files
                 JSArray files = new JSArray();
                 if (Intent.ACTION_SEND.equals(action)) {
-                    Uri fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                    Uri fileUri;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri.class);
+                    } else {
+                        fileUri = getParcelableExtraLegacy(intent, Intent.EXTRA_STREAM);
+                    }
                     if (fileUri != null) {
                         JSObject fileData = getFileData(fileUri);
                         if (fileData != null) {
@@ -67,7 +73,12 @@ public class CapacitorShareTargetPlugin extends Plugin {
                         }
                     }
                 } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
-                    ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                    ArrayList<Uri> fileUris;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri.class);
+                    } else {
+                        fileUris = getParcelableArrayListExtraLegacy(intent, Intent.EXTRA_STREAM);
+                    }
                     if (fileUris != null) {
                         for (Uri fileUri : fileUris) {
                             JSObject fileData = getFileData(fileUri);
@@ -86,6 +97,16 @@ public class CapacitorShareTargetPlugin extends Plugin {
                 Log.e(TAG, "Error handling shared content", e);
             }
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    private Uri getParcelableExtraLegacy(Intent intent, String key) {
+        return intent.getParcelableExtra(key);
+    }
+
+    @SuppressWarnings("deprecation")
+    private ArrayList<Uri> getParcelableArrayListExtraLegacy(Intent intent, String key) {
+        return intent.getParcelableArrayListExtra(key);
     }
 
     private JSObject getFileData(Uri uri) {
