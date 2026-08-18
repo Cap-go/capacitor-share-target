@@ -3,6 +3,7 @@ package app.capgo.sharetarget;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -59,7 +60,7 @@ public class CapacitorShareTargetPlugin extends Plugin {
                 // Get files
                 JSArray files = new JSArray();
                 if (Intent.ACTION_SEND.equals(action)) {
-                    Uri fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                    Uri fileUri = getStreamUri(intent);
                     if (fileUri != null) {
                         JSObject fileData = getFileData(fileUri);
                         if (fileData != null) {
@@ -67,7 +68,7 @@ public class CapacitorShareTargetPlugin extends Plugin {
                         }
                     }
                 } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
-                    ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                    ArrayList<Uri> fileUris = getStreamUris(intent);
                     if (fileUris != null) {
                         for (Uri fileUri : fileUris) {
                             JSObject fileData = getFileData(fileUri);
@@ -86,6 +87,30 @@ public class CapacitorShareTargetPlugin extends Plugin {
                 Log.e(TAG, "Error handling shared content", e);
             }
         }
+    }
+
+    private static Uri getStreamUri(Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri.class);
+        }
+        return getStreamUriLegacy(intent);
+    }
+
+    @SuppressWarnings("deprecation")
+    private static Uri getStreamUriLegacy(Intent intent) {
+        return intent.getParcelableExtra(Intent.EXTRA_STREAM);
+    }
+
+    private static ArrayList<Uri> getStreamUris(Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri.class);
+        }
+        return getStreamUrisLegacy(intent);
+    }
+
+    @SuppressWarnings("deprecation")
+    private static ArrayList<Uri> getStreamUrisLegacy(Intent intent) {
+        return intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
     }
 
     private JSObject getFileData(Uri uri) {
