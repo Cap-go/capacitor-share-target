@@ -18,8 +18,8 @@ class Cap9PositiveAndroidFixture extends Plugin {
         pluginRequestAllPermissions();
         startActivityForResult(call, new Intent(), 99);
         bridge.startActivityForPluginWithResult(call, new Intent(), 99);
-        CapConfig capConfig = new CapConfig(getContext().getAssets(), null);
-        capConfig.getObject("plugins");
+        CapConfig cfg = new CapConfig(getContext().getAssets(), null);
+        cfg.getObject("plugins");
         new MessageHandler(bridge, webView, new Object());
         pathHandler.getResponseHeaders();
         int x = Bridge.CAPACITOR_HTTPS_INTERCEPTOR_START;

@@ -5,4 +5,5 @@ let note = 'hasOption("also-ignored")'
 
 func cap9NegativeMaskedSwift() {
     let _ = getConfig().getString("ok")
+    let _ = "\(getConfig().getString(\"ok\"))"
 }

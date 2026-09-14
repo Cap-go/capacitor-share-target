@@ -201,7 +201,7 @@ export const RULES = [
   },
   {
     id: "android-CapConfig-getters",
-    pattern: /\b(?:CapConfig|capConfig)\w*\.(getObject|getString|getBoolean|getInt|getArray)\s*\(/,
+    pattern: /\u0000/,
     hint: "use typed CapConfig / PluginConfig accessors per Capacitor 9",
   },
   {
@@ -246,7 +246,7 @@ export const RULES = [
   },
   {
     id: "android-startActivityForResult-int",
-    pattern: /\bstartActivityForResult\s*\(.+,\s*\d+\s*\)/,
+    pattern: /\bstartActivityForResult\s*\([^\n;]+,\s*\d+\s*\)/,
     hint: "use startActivityForResult(PluginCall, Intent, String) with @ActivityCallback",
   },
   {
@@ -256,7 +256,7 @@ export const RULES = [
   },
   {
     id: "android-MessageHandler-3arg",
-    pattern: /\bnew MessageHandler\s*\([^)]*,[^)]*,[^)]*\)/,
+    pattern: /\bnew MessageHandler\s*\([^\n;]+\)/,
     hint: "use MessageHandler(Bridge, WebView)",
   },
   {
@@ -312,6 +312,32 @@ export function maskCommentsAndStrings(source) {
     }
 
     if (inStr) {
+      if (inStr === '"' && c === "\\" && next === "(") {
+        out += "  ";
+        i += 2;
+        let depth = 1;
+        while (i < source.length && depth > 0) {
+          const ch = source[i];
+          if (ch === "(") depth++;
+          else if (ch === ")") depth--;
+          out += ch;
+          i++;
+        }
+        continue;
+      }
+      if (inStr === '"' && c === "$" && next === "{") {
+        out += "  ";
+        i += 2;
+        let depth = 1;
+        while (i < source.length && depth > 0) {
+          const ch = source[i];
+          if (ch === "{") depth++;
+          else if (ch === "}") depth--;
+          out += ch;
+          i++;
+        }
+        continue;
+      }
       if (escape) {
         escape = false;
         out += " ";
@@ -424,6 +450,57 @@ function parseArgs(argv) {
   return out;
 }
 
+function lineAt(text, index) {
+  return text.slice(0, index).split("\n").length;
+}
+
+function snippetAt(text, lineNo) {
+  return (text.split("\n")[lineNo - 1] || "").trim();
+}
+
+/** @param {string} relPath */
+function rulesForFile(relPath) {
+  const ext = path.extname(relPath).toLowerCase();
+  return RULES.filter((rule) => {
+    if (rule.id.startsWith("ios-")) return ext === ".swift";
+    if (rule.id.startsWith("objc-")) return ext === ".m" || ext === ".mm";
+    if (rule.id.startsWith("android-")) return ext === ".java" || ext === ".kt";
+    return true;
+  });
+}
+
+/** @param {string} raw @param {string} masked */
+function findCapConfigGetterCalls(raw, masked) {
+  const vars = new Set();
+  const decl = /\bCapConfig\s+([A-Za-z_]\w*)/g;
+  let dm;
+  while ((dm = decl.exec(raw)) !== null) {
+    vars.add(dm[1]);
+  }
+
+  const rule = RULES.find((r) => r.id === "android-CapConfig-getters");
+  if (!rule) return [];
+
+  const hits = [];
+  for (const name of vars) {
+    const re = new RegExp(
+      `\\b${name}\\.(getObject|getString|getBoolean|getInt|getArray)\\s*\\(`,
+      "g",
+    );
+    let m;
+    while ((m = re.exec(masked)) !== null) {
+      const line = lineAt(raw, m.index);
+      hits.push({
+        rule: rule.id,
+        line,
+        hint: rule.hint,
+        snippet: snippetAt(raw, line),
+      });
+    }
+  }
+  return hits;
+}
+
 /**
  * @param {string} relPath
  * @param {string} text
@@ -432,21 +509,39 @@ function parseArgs(argv) {
 export function scanFile(relPath, text) {
   const masked = maskCommentsAndStrings(text);
   const hits = [];
-  const lines = masked.split("\n");
-  const rawLines = text.split("\n");
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    for (const rule of RULES) {
-      if (rule.pattern.test(line)) {
-        hits.push({
-          rule: rule.id,
-          line: i + 1,
-          hint: rule.hint,
-          snippet: (rawLines[i] || line).trim(),
-        });
-      }
+  const seen = new Set();
+
+  for (const rule of rulesForFile(relPath)) {
+    if (rule.id === "android-CapConfig-getters") {
+      continue;
+    }
+    const flags = rule.pattern.flags.includes("g") ? rule.pattern.flags : `${rule.pattern.flags}g`;
+    const re = new RegExp(rule.pattern.source, flags);
+    let m;
+    while ((m = re.exec(masked)) !== null) {
+      const dedupe = `${rule.id}:${m.index}`;
+      if (seen.has(dedupe)) continue;
+      seen.add(dedupe);
+      const line = lineAt(text, m.index);
+      hits.push({
+        rule: rule.id,
+        line,
+        hint: rule.hint,
+        snippet: snippetAt(text, line),
+      });
     }
   }
+
+  const ext = path.extname(relPath).toLowerCase();
+  if (ext === ".java" || ext === ".kt") {
+    for (const hit of findCapConfigGetterCalls(text, masked)) {
+      const dedupe = `${hit.rule}:${hit.line}:${hit.snippet}`;
+      if (seen.has(dedupe)) continue;
+      seen.add(dedupe);
+      hits.push(hit);
+    }
+  }
+
   return hits;
 }
 
@@ -514,7 +609,11 @@ function runSelfTest() {
     "positive-ios.swift",
     "positive-objc.m",
   ];
-  const negativeFiles = ["negative-masked.java", "negative-masked.swift"];
+  const negativeFiles = [
+    "negative-masked.java",
+    "negative-masked.swift",
+    "negative-cross-platform.java",
+  ];
 
   const matchedRules = new Set();
   for (const name of positiveFiles) {
