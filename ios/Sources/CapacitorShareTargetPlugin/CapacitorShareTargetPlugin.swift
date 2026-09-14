@@ -57,7 +57,7 @@ public class CapacitorShareTargetPlugin: CAPPlugin, CAPBridgedPlugin {
 
     private func checkForSharedContent() {
         // Get app group ID from configuration or use placeholder
-        let appGroupId = getConfigValue("appGroupId") as? String ?? "group.YOUR_APP_GROUP_ID"
+        let appGroupId = getConfig().getString("appGroupId") ?? "group.YOUR_APP_GROUP_ID"
         
         // Warn if placeholder is still being used
         if appGroupId == "group.YOUR_APP_GROUP_ID" {
