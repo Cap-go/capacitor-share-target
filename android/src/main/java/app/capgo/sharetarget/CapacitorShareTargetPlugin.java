@@ -92,7 +92,6 @@ public class CapacitorShareTargetPlugin extends Plugin {
 
                 // Notify listeners and retain until JavaScript registers to handle cold starts
                 notifyListeners("shareReceived", shareData, true);
-                Log.d(TAG, "Share received: " + shareData.toString());
             } catch (Exception e) {
                 Log.e(TAG, "Error handling shared content", e);
             }
@@ -182,7 +181,7 @@ public class CapacitorShareTargetPlugin extends Plugin {
                 fileName = "shared_file_" + System.currentTimeMillis();
             }
 
-            File outputFile = new File(cacheDir, fileName);
+            File outputFile = File.createTempFile("share-", "-" + new File(fileName).getName(), cacheDir);
 
             try (
                 InputStream inputStream = getActivity().getContentResolver().openInputStream(uri);
