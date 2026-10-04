@@ -61,6 +61,12 @@ public class CapacitorShareTargetPlugin extends Plugin {
 
                 // Get files
                 JSArray files = new JSArray();
+                File sharedFilesDir = new File(getContext().getCacheDir(), "shared_files");
+                if (!sharedFilesDir.exists()) {
+                    sharedFilesDir.mkdirs();
+                }
+                evictStaleSharedFiles(sharedFilesDir);
+
                 if (Intent.ACTION_SEND.equals(action)) {
                     Uri fileUri;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -179,33 +185,37 @@ public class CapacitorShareTargetPlugin extends Plugin {
                 cacheDir.mkdirs();
             }
 
-            if (fileName == null) {
-                fileName = "shared_file_" + System.currentTimeMillis();
-            }
+            File outputFile = File.createTempFile("share-", ".tmp", cacheDir);
 
-            evictStaleSharedFiles(cacheDir);
-
-            File outputFile = File.createTempFile("share-", "-" + new File(fileName).getName(), cacheDir);
-
-            try (
-                InputStream inputStream = getActivity().getContentResolver().openInputStream(uri);
-                FileOutputStream outputStream = new FileOutputStream(outputFile)
-            ) {
+            try (InputStream inputStream = getActivity().getContentResolver().openInputStream(uri)) {
                 if (inputStream == null) {
+                    deleteShareCacheFile(outputFile);
                     return null;
                 }
 
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
+                try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
                 }
+            } catch (Exception e) {
+                deleteShareCacheFile(outputFile);
+                Log.e(TAG, "Error copying file to cache", e);
+                return null;
             }
 
             return outputFile.getAbsolutePath();
         } catch (Exception e) {
             Log.e(TAG, "Error copying file to cache", e);
             return null;
+        }
+    }
+
+    private void deleteShareCacheFile(File file) {
+        if (!file.delete()) {
+            Log.w(TAG, "Could not delete share cache file after copy failed");
         }
     }
 
@@ -223,7 +233,7 @@ public class CapacitorShareTargetPlugin extends Plugin {
             }
             if (now - entry.lastModified() > SHARED_FILE_MAX_AGE_MS) {
                 if (!entry.delete()) {
-                    Log.w(TAG, "Could not delete stale share file: " + entry.getName());
+                    Log.w(TAG, "Could not delete stale share cache file");
                 }
             } else {
                 retained.add(entry);
@@ -239,7 +249,7 @@ public class CapacitorShareTargetPlugin extends Plugin {
         for (int i = 0; i < toRemove; i++) {
             File entry = retained.get(i);
             if (!entry.delete()) {
-                Log.w(TAG, "Could not delete excess share file: " + entry.getName());
+                Log.w(TAG, "Could not delete excess share cache file");
             }
         }
     }
