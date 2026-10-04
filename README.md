@@ -258,6 +258,8 @@ Represents a file shared to the application.
 
 ## Example
 
+On Android, shared files are copied into the app cache under `shared_files`. The plugin removes copies older than 24 hours and caps how many are kept, but your app should delete each `files[].uri` path after you finish processing it so large shares do not fill storage.
+
 Here's a complete example of handling shared content in your app:
 
 ```typescript
