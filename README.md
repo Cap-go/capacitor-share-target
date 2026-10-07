@@ -1,8 +1,27 @@
 # @capgo/capacitor-share-target
 
-<a href="https://capgo.app/"><img src="https://capgo.app/readme-banner.svg?repo=Cap-go/capacitor-share-target" alt="Capgo - Instant updates for Capacitor" /></a>
+Let users share text, links, images and files from other apps straight into your Capacitor app, through the system share sheet on iOS and Android.
 
-Capacitor plugin to receive shared content from other apps.
+<a href="https://capgo.app/?ref=plugin_share_target"><img src="https://capgo.app/readme-banner.svg?repo=Cap-go/capacitor-share-target" alt="Capgo - Instant updates for Capacitor" /></a>
+
+<div align="center">
+  <p><b>Capgo</b>: open-source live updates for Ionic and Capacitor apps. Ship OTA fixes and features instantly, without waiting for app store review.</p>
+  <h2><a href="https://capgo.app/register/?ref=plugin_share_target">➡️ Get started for free</a></h2>
+  <p>14-day unlimited free trial. No credit card required</p>
+  <p><a href="https://capgo.app/consulting/?ref=plugin_share_target">Missing a feature? We'll build the plugin for you 💪</a></p>
+</div>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Cap-go/capacitor-share-target/main/assets/github-social-preview.png" alt="@capgo/capacitor-share-target for Capacitor apps" width="300" />
+</p>
+
+## Key features
+
+- **Share event**: the `shareReceived` listener delivers the title, texts and files.
+- **Files**: each shared file comes with its URI, name and MIME type.
+- **Android**: receives content through intent filters you set for the MIME types you want.
+- **iOS**: reads content saved by your Share Extension through an App Group set as `appGroupId`.
+- **Platforms**: iOS and Android. iOS needs a Share Extension target. Not available on web.
 
 ## Compatibility
 
