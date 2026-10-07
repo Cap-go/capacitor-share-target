@@ -18,7 +18,7 @@ Let users share text, links, images and files from other apps straight into your
 ## Key features
 
 - **Share event**: the `shareReceived` listener delivers the title, texts and files.
-- **Files**: each shared file comes with its URI, name and MIME type.
+- **Files**: each shared file comes with its URI, name and MIME type. On iOS, your Share Extension must save these attachment details to the App Group.
 - **Android**: receives content through intent filters you set for the MIME types you want.
 - **iOS**: reads content saved by your Share Extension through an App Group set as `appGroupId`.
 - **Platforms**: iOS and Android. iOS needs a Share Extension target. Not available on web.
