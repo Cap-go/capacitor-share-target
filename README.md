@@ -277,6 +277,8 @@ Represents a file shared to the application.
 
 ## Example
 
+On Android, successful copies live under the app cache directory `shared_files`. The plugin removes copies older than 24 hours and caps how many are kept. When `files[].uri` is a path under that directory, delete it after you finish processing so large shares do not fill storage. If copying fails, `files[].uri` may be the original content URI instead.
+
 Here's a complete example of handling shared content in your app:
 
 ```typescript

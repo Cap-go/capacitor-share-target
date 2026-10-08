@@ -23,6 +23,8 @@ public class CapacitorShareTargetPlugin extends Plugin {
 
     private static final String TAG = "CapacitorShareTarget";
     private static final String pluginVersion = "7.0.0";
+    private static final long SHARED_FILE_MAX_AGE_MS = 24L * 60 * 60 * 1000;
+    private static final int SHARED_FILE_MAX_COUNT = 50;
 
     @Override
     protected void handleOnNewIntent(Intent intent) {
@@ -59,6 +61,12 @@ public class CapacitorShareTargetPlugin extends Plugin {
 
                 // Get files
                 JSArray files = new JSArray();
+                File sharedFilesDir = new File(getContext().getCacheDir(), "shared_files");
+                if (!sharedFilesDir.exists()) {
+                    sharedFilesDir.mkdirs();
+                }
+                evictStaleSharedFiles(sharedFilesDir);
+
                 if (Intent.ACTION_SEND.equals(action)) {
                     Uri fileUri;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -92,7 +100,6 @@ public class CapacitorShareTargetPlugin extends Plugin {
 
                 // Notify listeners and retain until JavaScript registers to handle cold starts
                 notifyListeners("shareReceived", shareData, true);
-                Log.d(TAG, "Share received: " + shareData.toString());
             } catch (Exception e) {
                 Log.e(TAG, "Error handling shared content", e);
             }
@@ -178,31 +185,72 @@ public class CapacitorShareTargetPlugin extends Plugin {
                 cacheDir.mkdirs();
             }
 
-            if (fileName == null) {
-                fileName = "shared_file_" + System.currentTimeMillis();
-            }
+            File outputFile = File.createTempFile("share-", ".tmp", cacheDir);
 
-            File outputFile = new File(cacheDir, fileName);
-
-            try (
-                InputStream inputStream = getActivity().getContentResolver().openInputStream(uri);
-                FileOutputStream outputStream = new FileOutputStream(outputFile)
-            ) {
+            try (InputStream inputStream = getActivity().getContentResolver().openInputStream(uri)) {
                 if (inputStream == null) {
+                    deleteShareCacheFile(outputFile);
                     return null;
                 }
 
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
+                try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
                 }
+            } catch (Exception e) {
+                deleteShareCacheFile(outputFile);
+                Log.e(TAG, "Error copying file to cache", e);
+                return null;
             }
 
             return outputFile.getAbsolutePath();
         } catch (Exception e) {
             Log.e(TAG, "Error copying file to cache", e);
             return null;
+        }
+    }
+
+    private void deleteShareCacheFile(File file) {
+        if (!file.delete()) {
+            Log.w(TAG, "Could not delete share cache file after copy failed");
+        }
+    }
+
+    private void evictStaleSharedFiles(File cacheDir) {
+        File[] entries = cacheDir.listFiles();
+        if (entries == null || entries.length == 0) {
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        ArrayList<File> retained = new ArrayList<>();
+        for (File entry : entries) {
+            if (!entry.isFile()) {
+                continue;
+            }
+            if (now - entry.lastModified() > SHARED_FILE_MAX_AGE_MS) {
+                if (!entry.delete()) {
+                    Log.w(TAG, "Could not delete stale share cache file");
+                }
+            } else {
+                retained.add(entry);
+            }
+        }
+
+        if (retained.size() <= SHARED_FILE_MAX_COUNT) {
+            return;
+        }
+
+        retained.sort((a, b) -> Long.compare(a.lastModified(), b.lastModified()));
+        int toRemove = retained.size() - SHARED_FILE_MAX_COUNT;
+        for (int i = 0; i < toRemove; i++) {
+            File entry = retained.get(i);
+            if (!entry.delete()) {
+                Log.w(TAG, "Could not delete excess share cache file");
+            }
         }
     }
 
