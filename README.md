@@ -2,7 +2,7 @@
 
 Let users share text, links, images and files from other apps straight into your Capacitor app, through the system share sheet on iOS and Android.
 
-<a href="https://capgo.app/?ref=plugin_share_target"><img src="https://capgo.app/readme-banner.svg?repo=Cap-go/capacitor-share-target" alt="Capgo - Instant updates for Capacitor" /></a>
+<a href="https://capgo.app/?ref=plugin_share_target"><img src="https://capgo.app/readme-banner.svg?repo=Cap-go/capacitor-share-target" alt="Capgo - Build Capacitor apps with AI, ship updates instantly" /></a>
 
 <div align="center">
   <p><b>Capgo</b>: push fixes to your Capacitor users in minutes, build signed iOS and Android apps without a Mac, and roll back in one click.</p>
@@ -10,6 +10,8 @@ Let users share text, links, images and files from other apps straight into your
   <p>14-day unlimited free trial. No credit card required</p>
   <p><a href="https://capgo.app/consulting/?ref=plugin_share_target">Missing a feature? We'll build the plugin for you 💪</a></p>
 </div>
+
+> 🤖 **Building with an AI coding agent?** Install [Capgo skills](https://capgo.app/skills/?ref=plugin_share_target) so Claude Code, Codex, Cursor, Copilot, or Gemini CLI know how to install and use `@capgo/capacitor-share-target` in your Capacitor app: `npx skills add Cap-go/capgo-skills`. Then ask your agent: *"Add @capgo/capacitor-share-target to my Capacitor app and wire it up."* [Agent setup guides](https://capgo.app/agents/?ref=plugin_share_target) · [Hosted MCP](https://capgo.app/docs/ai/mcp/?ref=plugin_share_target)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Cap-go/capacitor-share-target/main/assets/github-social-preview.png" alt="@capgo/capacitor-share-target for Capacitor apps" width="300" />
